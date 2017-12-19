@@ -3,6 +3,7 @@
 namespace A2design\DbBackup;
 
 use A2design\DbBackup\Commands\DbBackupCommand;
+use A2design\DbBackup\Commands\DbBackupsListCommand;
 use Illuminate\Support\ServiceProvider;
 
 class DbBackupServiceProvider extends ServiceProvider {
@@ -23,7 +24,8 @@ class DbBackupServiceProvider extends ServiceProvider {
     {
         $this->commands(
             [
-                DbBackupCommand::class
+                DbBackupCommand::class,
+                DbBackupsListCommand::class,
             ]
         );
     }

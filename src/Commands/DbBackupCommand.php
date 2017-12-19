@@ -2,13 +2,11 @@
 
 namespace A2design\DbBackup\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
-class DbBackupCommand extends Command
+class DbBackupCommand extends BaseCommand
 {
     /**
      * The name and signature of the console command.
@@ -25,16 +23,6 @@ class DbBackupCommand extends Command
     protected $description = 'Backup current application database and remove old backups';
 
     /**
-     * @var null|string
-     */
-    protected $backupsDir = null;
-
-    /**
-     * @var Filesystem|null
-     */
-    protected $fileSystem = null;
-
-    /**
      * Create a new command instance.
      *
      * @return void
@@ -42,12 +30,6 @@ class DbBackupCommand extends Command
     public function __construct()
     {
         parent::__construct();
-
-        $this->fileSystem = new Filesystem();
-        $this->backupsDir = storage_path('backups') . DIRECTORY_SEPARATOR;
-        if (!$this->fileSystem->exists($this->backupsDir)) {
-            $this->fileSystem->makeDirectory($this->backupsDir);
-        }
     }
 
     /**
@@ -57,17 +39,7 @@ class DbBackupCommand extends Command
      */
     public function handle()
     {
-        $config = [
-            'host' => env('DB_HOST'),
-            'port' => env('DB_PORT'),
-            'user' => env('DB_USERNAME'),
-            'pass' => env('DB_PASSWORD') ,
-            'name' => env('DB_DATABASE'),
-            'dest' => $this->backupsDir . date('Y-m-d') . '.sql',
-            'gzip' => true,
-        ];
-
-        $command = $this->getCommand($config);
+        $command = $this->getCommand($this->config);
         $process = new Process($command);
         $process->run();
         if (!$process->isSuccessful()) {
@@ -116,7 +88,7 @@ class DbBackupCommand extends Command
         $dates = $this->getDates();
 
         $finder = new Finder();
-        $finder->files()->in(storage_path('backups'));
+        $finder->files()->in($this->backupsDir);
 
         foreach ($finder as $file) {
             $tmp = explode('.', $file->getFilename());
