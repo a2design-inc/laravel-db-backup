@@ -9,6 +9,18 @@ You can install this package via composer using:
 composer require a2design-inc/laravel-db-backup
 ```
 
+Register the provider (config/app.php):
+
+```PHP
+'providers' => [
+    ...
+    /*
+     * Package Service Providers...
+     */
+    A2design\DbBackup\DbBackupServiceProvider::class,
+    ...
+],
+```
 
 ## Usage
 ``` bash
