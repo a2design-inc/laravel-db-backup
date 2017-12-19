@@ -1,0 +1,23 @@
+{
+  "name": "a2design-inc/laravel-db-backup",
+  "description": "Artisan command for backup Laravel application database",
+  "keywords": ["backup", "laravel", "command"],
+  "homepage": "https://github.com/a2design-inc/laravel-db-backup",
+  "license": "MIT",
+  "support": {
+    "issues": "https://github.com/a2design-inc/laravel-db-backup/issues",
+    "source": "https://github.com/a2design-inc/laravel-db-backup"
+  },
+  "authors": [
+    {
+      "name": "Sergey Nazarov",
+      "homepage": "https://github.com/MrMYSTIC",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "A2design\\DbBackup\\": "src/"
+    }
+  }
+}
