@@ -34,14 +34,16 @@ class BaseCommand extends Command
             $this->fileSystem->makeDirectory($this->backupsDir);
         }
 
+        $compress = true;
+
         $this->config = [
             'host' => env('DB_HOST'),
             'port' => env('DB_PORT'),
             'user' => env('DB_USERNAME'),
             'pass' => env('DB_PASSWORD') ,
             'name' => env('DB_DATABASE'),
-            'dest' => $this->backupsDir . date('Y-m-d') . '.sql',
-            'gzip' => true,
+            'file' => $this->backupsDir . date('Y-m-d') . '.sql' . ($compress ? '.gz' : ''),
+            'gzip' => $compress,
         ];
     }
 }

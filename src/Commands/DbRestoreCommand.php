@@ -6,21 +6,21 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
-class DbBackupCommand extends BaseCommand
+class DbRestoreCommand extends BaseCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'db:backup';
+    protected $signature = 'db:restore {backup=last}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Backup current application database and remove old backups';
+    protected $description = 'Restore database from backup';
 
     /**
      * Create a new command instance.
@@ -35,18 +35,39 @@ class DbBackupCommand extends BaseCommand
     /**
      * Execute the console command.
      *
+     * @throws \Exception
      * @return mixed
      */
     public function handle()
     {
+        $backup = $this->argument('backup');
+        $backups = $this->getBackups();
+        if ($backup == 'last') {
+            $backup = end($backups);
+        } else {
+            if (!in_array($backup, $backups)) {
+                throw new \Exception('Backup file does not exists.');
+            }
+        }
+
+        $this->config['file'] = $this->backupsDir . $backup;
+
+        $this->checkIsCompressed();
+
         $command = $this->getCommand($this->config);
         $process = new Process($command);
         $process->run();
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
+    }
 
-        $this->cleanup();
+    /**
+     * @return void
+     */
+    private function checkIsCompressed()
+    {
+        $this->config['gzip'] = $this->fileSystem->extension($this->config['file']) == 'gz';
     }
 
     /**
@@ -55,7 +76,7 @@ class DbBackupCommand extends BaseCommand
      */
     private function getCommand($config)
     {
-        $cmd = "mysqldump --hex-blob";
+        $cmd = "mysql";
         if (!empty($config['host'])) {
             $cmd .= " -h{$config['host']}";
         }
@@ -72,50 +93,26 @@ class DbBackupCommand extends BaseCommand
         $cmd .= " {$config['name']}";
 
         if ($config['gzip']) {
-            $cmd .= " | gzip > {$config['file']}";
+            $cmd = "gunzip < {$config['file']} | {$cmd}";
         } else {
-            $cmd .= " > {$config['file']}";
+            $cmd .= " < {$config['file']}";
         }
 
         return $cmd;
     }
 
-    /**
-     * @return void
-     */
-    private function cleanup()
+    private function getBackups()
     {
-        $dates = $this->getDates();
+        $backups = [];
 
         $finder = new Finder();
         $finder->files()->in($this->backupsDir);
-
         foreach ($finder as $file) {
-            $tmp = explode('.', $file->getFilename());
-            if (!in_array($tmp[0], $dates)) {
-                $this->fileSystem->delete($file->getRealPath());
-            }
-        }
-    }
-
-    /**
-     * @return array
-     */
-    private function getDates()
-    {
-        $allowedDates = [
-            date('Y-m-d'),
-        ];
-        for ($i = 1; $i <= 7; $i++) {
-            $allowedDates[] = date('Y-m-d', strtotime('-' . $i . ' day'));
-        }
-        for ($i = 1; $i <= 12; $i++) {
-            $date = date('Y-m-01', strtotime('-' . $i . ' month'));
-            if (!in_array($date, $allowedDates)) {
-                $allowedDates[] = $date;
-            }
+            $backups[] = $file->getFilename();
         }
 
-        return $allowedDates;
+        asort($backups);
+
+        return $backups;
     }
 }

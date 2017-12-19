@@ -23,10 +23,27 @@ Register the provider (config/app.php):
 ```
 
 ## Usage
+For backup the database use next command
 ``` bash
 php artisan db:backup
 ```
 
+Also you can list all existed backups (for example before restore) using next command
+``` bash
+php artisan db:backups-list
+```
+
+And for restore backup use next command
+``` bash
+php artisan db:restore
+```
+
+By default this command will use latest backup, but you can provide filename of existed backup
+``` bash
+php artisan db:restore 2017-12-17.sql[.gz]
+```
+
+In this case using compression will be detected automatically.
 
 ## Scheduling
 

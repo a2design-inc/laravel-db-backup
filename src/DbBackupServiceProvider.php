@@ -4,6 +4,7 @@ namespace A2design\DbBackup;
 
 use A2design\DbBackup\Commands\DbBackupCommand;
 use A2design\DbBackup\Commands\DbBackupsListCommand;
+use A2design\DbBackup\Commands\DbRestoreCommand;
 use Illuminate\Support\ServiceProvider;
 
 class DbBackupServiceProvider extends ServiceProvider {
@@ -26,6 +27,7 @@ class DbBackupServiceProvider extends ServiceProvider {
             [
                 DbBackupCommand::class,
                 DbBackupsListCommand::class,
+                DbRestoreCommand::class,
             ]
         );
     }
