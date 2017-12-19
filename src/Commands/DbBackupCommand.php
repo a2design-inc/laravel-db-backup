@@ -1,6 +1,6 @@
 <?php
 
-namespace A2design\DbBackup\Command;
+namespace A2design\DbBackup\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
