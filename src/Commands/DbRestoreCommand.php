@@ -87,7 +87,7 @@ class DbRestoreCommand extends BaseCommand
             $cmd .= " -u{$config['user']}";
         }
         if (!empty($config['pass'])) {
-            $cmd .= " -p{$config['pass']}";
+            $cmd .= " -p'{$config['pass']}'";
         }
 
         $cmd .= " {$config['name']}";
