@@ -9,7 +9,7 @@ You can install this package via composer using:
 composer require a2design-inc/laravel-db-backup
 ```
 
-Register the provider (config/app.php):
+Register the provider (config/app.php) for Laravel < 5.5:
 
 ```PHP
 'providers' => [
