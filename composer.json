@@ -19,5 +19,12 @@
     "psr-4": {
       "A2design\\DbBackup\\": "src/"
     }
+  },
+  "extra": {
+    "laravel": {
+        "providers": [
+            "A2design\\DbBackup\\DbBackupServiceProvider"
+        ]
+    }
   }
 }
